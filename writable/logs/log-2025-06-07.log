@@ -1,0 +1,89 @@
+WARNING - 2025-06-07 06:16:47 --> [DEPRECATED] Creation of dynamic property CodeIgniter\HTTP\IncomingRequest::$user is deprecated in APPPATH\Filters\JWTAuthFilter.php on line 45.
+ 1 SYSTEMPATH\Filters\Filters.php(241): App\Filters\JWTAuthFilter->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 2 SYSTEMPATH\Filters\Filters.php(221): CodeIgniter\Filters\Filters->runBefore([...])
+ 3 SYSTEMPATH\CodeIgniter.php(479): CodeIgniter\Filters\Filters->run('api/test/answer', 'before')
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-07 06:16:47 --> TypeError: Key material must be a string, resource, or OpenSSLAsymmetricKey
+[Method: POST, Route: api/test/answer]
+in VENDORPATH\firebase\php-jwt\src\Key.php on line 26.
+ 1 APPPATH\Controllers\Test.php(55): Firebase\JWT\Key->__construct(false, 'HS256')
+ 2 APPPATH\Controllers\Test.php(169): App\Controllers\Test->getUserFromToken()
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Test->submitAnswerAndGetNextQuestion()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Test))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-07 06:18:45 --> TypeError: Key material must be a string, resource, or OpenSSLAsymmetricKey
+[Method: POST, Route: api/test/answer]
+in VENDORPATH\firebase\php-jwt\src\Key.php on line 26.
+ 1 APPPATH\Filters\JWTAuthFilter.php(40): Firebase\JWT\Key->__construct(false, 'HS256')
+ 2 SYSTEMPATH\Filters\Filters.php(241): App\Filters\JWTAuthFilter->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 3 SYSTEMPATH\Filters\Filters.php(221): CodeIgniter\Filters\Filters->runBefore([...])
+ 4 SYSTEMPATH\CodeIgniter.php(479): CodeIgniter\Filters\Filters->run('api/test/answer', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-07 06:18:46 --> TypeError: Key material must be a string, resource, or OpenSSLAsymmetricKey
+[Method: POST, Route: api/test/answer]
+in VENDORPATH\firebase\php-jwt\src\Key.php on line 26.
+ 1 APPPATH\Filters\JWTAuthFilter.php(40): Firebase\JWT\Key->__construct(false, 'HS256')
+ 2 SYSTEMPATH\Filters\Filters.php(241): App\Filters\JWTAuthFilter->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 3 SYSTEMPATH\Filters\Filters.php(221): CodeIgniter\Filters\Filters->runBefore([...])
+ 4 SYSTEMPATH\CodeIgniter.php(479): CodeIgniter\Filters\Filters->run('api/test/answer', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-07 06:20:30 --> TypeError: Key material must be a string, resource, or OpenSSLAsymmetricKey
+[Method: POST, Route: api/test/answer]
+in VENDORPATH\firebase\php-jwt\src\Key.php on line 26.
+ 1 APPPATH\Filters\JWTAuthFilter.php(40): Firebase\JWT\Key->__construct(false, 'HS256')
+ 2 SYSTEMPATH\Filters\Filters.php(241): App\Filters\JWTAuthFilter->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 3 SYSTEMPATH\Filters\Filters.php(221): CodeIgniter\Filters\Filters->runBefore([...])
+ 4 SYSTEMPATH\CodeIgniter.php(479): CodeIgniter\Filters\Filters->run('api/test/answer', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+WARNING - 2025-06-07 06:22:02 --> [DEPRECATED] Creation of dynamic property CodeIgniter\HTTP\IncomingRequest::$user is deprecated in APPPATH\Filters\JWTAuthFilter.php on line 45.
+ 1 SYSTEMPATH\Filters\Filters.php(241): App\Filters\JWTAuthFilter->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 2 SYSTEMPATH\Filters\Filters.php(221): CodeIgniter\Filters\Filters->runBefore([...])
+ 3 SYSTEMPATH\CodeIgniter.php(479): CodeIgniter\Filters\Filters->run('api/test/answer', 'before')
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-06-07 06:22:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2025-06-07 06:22:42 --> Kunci JWT tidak ditemukan di .env
+ERROR - 2025-06-07 06:22:45 --> Kunci JWT tidak ditemukan di .env
+ERROR - 2025-06-07 06:22:55 --> Kunci JWT tidak ditemukan di .env
+ERROR - 2025-06-07 06:23:07 --> Kunci JWT tidak ditemukan di .env
+ERROR - 2025-06-07 06:23:08 --> Kunci JWT tidak ditemukan di .env
+ERROR - 2025-06-07 06:23:29 --> Kunci JWT tidak ditemukan di .env
+CRITICAL - 2025-06-07 06:23:33 --> TypeError: Key material must be a string, resource, or OpenSSLAsymmetricKey
+[Method: POST, Route: api/test/answer]
+in VENDORPATH\firebase\php-jwt\src\Key.php on line 26.
+ 1 APPPATH\Filters\JWTAuthFilter.php(40): Firebase\JWT\Key->__construct(false, 'HS256')
+ 2 SYSTEMPATH\Filters\Filters.php(241): App\Filters\JWTAuthFilter->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 3 SYSTEMPATH\Filters\Filters.php(221): CodeIgniter\Filters\Filters->runBefore([...])
+ 4 SYSTEMPATH\CodeIgniter.php(479): CodeIgniter\Filters\Filters->run('api/test/answer', 'before')
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2025-06-07 06:26:08 --> Kunci JWT tidak ditemukan di .env
+ERROR - 2025-06-07 06:27:21 --> Kunci JWT tidak ditemukan di .env
+WARNING - 2025-06-07 06:29:09 --> [DEPRECATED] Creation of dynamic property CodeIgniter\HTTP\IncomingRequest::$user is deprecated in APPPATH\Filters\JWTAuthFilter.php on line 45.
+ 1 SYSTEMPATH\Filters\Filters.php(241): App\Filters\JWTAuthFilter->before(Object(CodeIgniter\HTTP\IncomingRequest), null)
+ 2 SYSTEMPATH\Filters\Filters.php(221): CodeIgniter\Filters\Filters->runBefore([...])
+ 3 SYSTEMPATH\CodeIgniter.php(479): CodeIgniter\Filters\Filters->run('api/test/answer', 'before')
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(56): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2025-06-07 06:29:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
