@@ -20,8 +20,6 @@ class Auth extends Controller
             $data = $this->request->getJSON(true);
         }
 
-        // Pastikan data tidak kosong
-        // Ubah baris ini
         if (empty($data)) {
             return $this->fail(['message' => 'Tidak ada data yang diterima untuk registrasi.'], 400);
         }
@@ -48,7 +46,6 @@ class Auth extends Controller
     {
         $userModel = new UserModel();
 
-        // 1. Ambil data dari request
         $email    = $this->request->getPost('email');
         $password = $this->request->getPost('password');
 
@@ -58,62 +55,50 @@ class Auth extends Controller
             $password  = $json_data['password'] ?? null;
         }
 
-        // 2. Validasi input
         if (empty($email) || empty($password)) {
             return $this->fail(['message' => 'Email dan password harus diisi.'], 400);
         }
 
-        // 3. Cari user
         $user = $userModel->where('email', $email)->first();
 
-        // 4. Verifikasi user dan password
         if (!$user || !password_verify($password, $user['password'])) {
             return $this->failUnauthorized('Email atau password salah.');
         }
-
-        // 5. Login Berhasil! <<== BUAT TOKEN JWT DI SINI ==>>
-
         try {
-            $key = getenv('JWT_SECRET'); // Ambil kunci dari .env
+            $key = getenv('JWT_SECRET'); 
             if (!$key) {
                 log_message('error', 'Kunci JWT tidak ditemukan di .env');
                 return $this->failServerError('Terjadi kesalahan konfigurasi server.');
             }
 
-            $iat = time(); // Waktu token dibuat (Issued At)
-            $exp = $iat + (60 * 60 * 24); // Waktu kadaluarsa (Contoh: 1 hari = 60 detik * 60 menit * 24 jam)
-            $iss = base_url(); // Issuer - Siapa yang mengeluarkan token (URL aplikasi Anda)
-            $aud = base_url(); // Audience - Untuk siapa token ini (URL aplikasi Anda)
+            $iat = time(); 
+            $exp = $iat + 
+            $iss = base_url();
+            $aud = base_url(); 
 
             $payload = [
                 'iss'  => $iss,
                 'aud'  => $aud,
                 'iat'  => $iat,
                 'exp'  => $exp,
-                'uid'  => $user['id_user'], // Ganti 'id_user' sesuai nama kolom ID Anda
-                'email'=> $user['email'],
-                // Anda bisa menambahkan data lain (role, nama, dll)
-                // HINDARI menyimpan data sensitif di payload!
+                'uid'  => $user['id_user'], 
+                'email' => $user['email'],
             ];
 
-            // Membuat token
-            $token = JWT::encode($payload, $key, 'HS256'); // HS256 adalah algoritma umum
+          
+            $token = JWT::encode($payload, $key, 'HS256'); 
 
         } catch (\Exception $e) {
             log_message('error', 'Gagal membuat token JWT: ' . $e->getMessage());
             return $this->failServerError('Gagal memproses login, coba lagi nanti.');
         }
-
-
-        // Hapus password hash sebelum mengirim respons
         unset($user['password']);
 
-        // 6. Kirim respons sukses DENGAN TOKEN
         return $this->respond([
             'status'  => 200,
             'message' => 'Login berhasil!',
             'data'    => $user,
-            'token'   => $token // <--- SERTAKAN TOKEN DI SINI
+            'token'   => $token 
         ]);
     }
 }

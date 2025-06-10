@@ -23,7 +23,6 @@ class Test extends Controller
 
     public function __construct()
     {
-        // Pastikan Anda memuat helper 'session' jika Anda mengandalkan sesi
         helper('session');
 
         $this->questionModel    = new QuestionModel();
@@ -32,112 +31,85 @@ class Test extends Controller
         $this->testResultModel  = new TestResultModel();
     }
 
-    /**
-     * Endpoint untuk memulai tes dan mengambil soal pertama.
-     * Diasumsikan user sudah login dan id_user serta id_test bisa didapatkan.
-     *
-     * @param int|null $id_test ID Tes yang akan dimulai.
-     * @return \CodeIgniter\HTTP\ResponseInterface
-     */
-
     private function getUserFromToken()
     {
         $authHeader = $this->request->getHeaderLine('Authorization');
 
         if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-            return null; // Atau return response failUnauthorized
+            return null; 
         }
 
         $token = $matches[1];
-        $key = getenv('JWT_SECRET'); // Ambil dari .env, misalnya: JWT_SECRET="rahasia123"
+        $key = getenv('JWT_SECRET');
 
         try {
             $decoded = JWT::decode($token, new Key($key, 'HS256'));
-            return $decoded; // return user info dari token
+            return $decoded; 
         } catch (\Exception $e) {
-            return null; // Token tidak valid
+            return null; 
         }
     }
 
     public function startTest($id_test = null)
     {
-        // 1. OTENTIKASI PENGGUNA (DARI TOKEN JWT)
-        /** @var \CodeIgniter\HTTP\IncomingRequest $request */
-        $request = $this->request; // Pastikan $this->request tersedia
+        $request = $this->request; 
         $decodedToken = $this->getUserFromToken();
         if (!$decodedToken) {
             return $this->failUnauthorized('Token tidak valid atau tidak ditemukan.');
         }
         $id_user = $decodedToken->uid;
 
-        // 2. VALIDASI id_test DARI URL
         if (is_null($id_test) || !is_numeric($id_test)) {
             return $this->fail('ID Tes tidak valid atau tidak disertakan.', 400);
         }
 
-        // 3. CEK DATA DI TABEL test_results UNTUK USER DAN TES INI
         $existingResult = $this->testResultModel
             ->where('id_user', $id_user)
             ->where('id_test', $id_test)
             ->first();
 
-        // 4. PENGECEKAN KONDISI BERDASARKAN DATA DI DATABASE
         if (!$existingResult) {
-            // Jika tidak ada record sama sekali
-            // Mengirimkan informasi debug tambahan di respons JSON
             return $this->fail(
                 [
-                    // Pesan error asli
                     'error' => 'Sesi tes untuk Anda belum diinisialisasi. Mohon lengkapi data awal tes terlebih dahulu.',
-                    // Informasi debug tambahan
                     'debug_info' => [
                         'searched_id_user' => $id_user,
                         'searched_id_test' => $id_test,
                         'database_result' => 'Tidak ada record ditemukan untuk kombinasi user & tes ini.'
                     ]
                 ],
-                400 // Status code HTTP
+                
             );
         }
 
-        // Jika record ditemukan, sekarang cek apakah kolom pendidikan dan tujuan sudah terisi.
         if (empty($existingResult['pendidikan']) || empty($existingResult['tujuan_Pemeriksaan'])) {
-            // Record ada, tapi data pendidikan atau tujuan_Pemeriksaan di database kosong.
-            // Mengirimkan informasi debug tambahan di respons JSON
             return $this->fail(
                 [
-                    // Pesan error asli
                     'error' => 'Data Pendidikan dan/atau Tujuan Pemeriksaan untuk sesi tes ini belum lengkap. Mohon lengkapi data tersebut terlebih dahulu.',
-                    // Informasi debug tambahan
                     'debug_info' => [
-                        'retrieved_test_result_id' => $existingResult['id_result'] ?? 'ID Result tidak tersedia', // Ganti 'id_result' dengan nama primary key Anda jika berbeda
+                        'retrieved_test_result_id' => $existingResult['id_result'] ?? 'ID Result tidak tersedia', 
                         'retrieved_pendidikan' => $existingResult['pendidikan'],
                         'retrieved_tujuan_Pemeriksaan' => $existingResult['tujuan_Pemeriksaan'],
-                        'full_existing_result_from_db' => $existingResult // Seluruh data yang diambil dari DB
+                        'full_existing_result_from_db' => $existingResult 
                     ]
                 ],
-                400 // Status code HTTP
+               
             );
         }
 
-        // 5. JIKA SEMUA DATA DI DATABASE SUDAH LENGKAP, LANJUTKAN TES (Kode dari sini tetap sama)
-        $currentTestResultId = $existingResult['id_result']; // Gunakan ID dari record yang ada di database
+        $currentTestResultId = $existingResult['id_result']; 
 
-        // AMBIL SOAL
         $questions = $this->questionModel->where('id_test', $id_test)->findAll();
         if (empty($questions)) {
             return $this->failNotFound('Soal tes tidak ditemukan untuk ID tes ini.');
         }
         shuffle($questions);
 
-        // SIMPAN STATE TES KE SESI
         session()->set('current_test_questions', $questions);
         session()->set('current_question_index', 0);
         session()->set('current_test_result_id', $currentTestResultId);
-        session()->set('current_test_id', $id_test); // Tambahan penting
+        session()->set('current_test_id', $id_test); 
 
-
-        // KIRIM SOAL PERTAMA
         $firstQuestion = $questions[0];
         return $this->respond([
             'status'  => 200,
@@ -153,87 +125,74 @@ class Test extends Controller
         ]);
     }
 
-    /**
-     * Endpoint untuk submit jawaban soal saat ini dan mengambil soal berikutnya.
-     *
-     * @return \CodeIgniter\HTTP\ResponseInterface
-     */
     public function submitAnswerAndGetNextQuestion()
     {
-
-        // ===== BAGIAN BARU YANG PERLU DITAMBAHKAN =====
-        // 1. OTENTIKASI PENGGUNA (DARI TOKEN JWT)
-        /** @var \CodeIgniter\HTTP\IncomingRequest $request */
-
-        $request = $this->request;
         $decodedToken = $this->getUserFromToken();
         if (!$decodedToken) {
             return $this->failUnauthorized('Token tidak valid atau tidak ditemukan.');
         }
-        $id_user = $decodedToken->uid; // <-- AMBIL ID USER DARI SINI
-        // =============================================
-
-
-        // Fokus pada data sesi inti yang diset oleh startTest
-        $questions       = session()->get('current_test_questions');
-        $currentIndex    = session()->get('current_question_index');
-        $id_result  = session()->get('current_test_result_id');
-
-        // Kondisi if Anda sekarang menjadi:
-        if (is_null($id_result) || is_null($questions) || is_null($currentIndex)) {
-            return $this->failUnauthorized('Sesi tes tidak ditemukan atau kadaluarsa. Mohon mulai tes kembali.');
-        }
 
         $data = $this->request->getJSON(true) ?? $this->request->getPost();
 
-        $id_question_submitted = $data['id_question'] ?? null;
-        $jawaban_user          = $data['jawaban_user'] ?? null;
+        $id_question     = $data['id_question'] ?? null;
+        $id_user         = $data['id_user'] ?? null;
+        $id_test         = $data['id_test'] ?? null;
+        $id_result       = $data['id_result'] ?? null;
+        $jawaban_user    = $data['jawaban_user'] ?? null;
 
-
-        // Pastikan soal yang disubmit adalah soal yang sedang aktif
-        $currentQuestion = $questions[$currentIndex];
-        if (empty($id_question_submitted) || (int)$id_question_submitted !== (int)$currentQuestion['id_question']) {
-            return $this->fail(['message' => 'ID Soal tidak valid atau tidak sesuai dengan soal yang sedang aktif.'], 400);
-        }
-        if (empty($jawaban_user)) {
-            return $this->fail(['message' => 'Jawaban tidak boleh kosong.']);
+        if (!$id_question || !$id_user || !$id_test || !$id_result || !$jawaban_user) {
+            return $this->failNotFound('Semua field (id_question, id_user, id_test, id_result, jawaban_user) wajib diisi.');
         }
 
-        $jawabanData = [
-            'id_result' => $id_result, // <--- Ini kunci penghubung ke test_results
-            'id_question'    => (int)$currentQuestion['id_question'],
-            'jawaban_user'   => $jawaban_user,
-            'waktu_submit'   => date('Y-m-d H:i:s'),
+        if ((int)$id_user !== (int)$decodedToken->uid) {
+            return $this->failForbidden('ID user tidak sesuai dengan token.');
+        }
+
+        $existing = $this->userJawabanModel
+            ->where([
+                'id_question' => $id_question,
+                'id_user'     => $id_user,
+                'id_test'     => $id_test,
+                'id_result'   => $id_result,
+            ])->first();
+
+        if ($existing) {
+            if ($existing['jawaban_user'] !== $jawaban_user) {
+                $updateData = [
+                    'id_jawaban'            => $existing['id_jawaban'],
+                    'jawaban_user'  => $jawaban_user,
+                    'waktu_submit'  => date('Y-m-d H:i:s'),
+                ];
+                $this->userJawabanModel->save($updateData);
+                return $this->respond([
+                    'status'  => 200,
+                    'message' => 'Jawaban diperbarui.',
+                ]);
+            } else {
+                return $this->respond([
+                    'status'  => 200,
+                    'message' => 'Jawaban berhasil disimpan',
+                ]);
+            }
+        }
+
+        // Jika belum ada, simpan jawaban baru
+        $newData = [
+            'id_question'   => $id_question,
+            'id_user'       => $id_user,
+            'id_test'       => $id_test,
+            'id_result'     => $id_result,
+            'jawaban_user'  => $jawaban_user,
+            'waktu_submit'  => date('Y-m-d H:i:s'),
         ];
 
-        // Validasi dan simpan jawaban
-        if (!$this->userJawabanModel->save($jawabanData)) {
-            return $this->fail('Gagal menyimpan jawaban: ' . json_encode($this->userJawabanModel->errors()), 500);
-        }
-
-        $nextIndex = $currentIndex + 1;
-        session()->set('current_question_index', $nextIndex);
-
-        if ($nextIndex < count($questions)) {
-            // Ada soal berikutnya, kirimkan
-            $nextQuestion = $questions[$nextIndex];
+        if ($this->userJawabanModel->insert($newData)) {
             return $this->respond([
-                'status'          => 200,
-                'message'         => 'Jawaban tersimpan. Soal berikutnya berhasil diambil.',
-                'question_number' => $nextIndex + 1,
-                'total_questions' => count($questions),
-                'question'        => [
-                    'id_question'   => $nextQuestion['id_question'],
-                    'pasangan_kata' => $nextQuestion['pasangan_kata']
-                ],
+                'status'  => 201,
+                'message' => 'Jawaban baru berhasil disimpan.',
             ]);
         } else {
-            // Semua soal sudah selesai, panggil fungsi untuk menghitung dan menampilkan hasil
-            $id_test = session()->get('current_test_id');
-            if (is_null($id_test)) {
-                return $this->failUnauthorized('ID Tes tidak ditemukan dalam sesi. Mohon mulai tes kembali.');
-            }
-            return $this->getResult($id_user, $id_test);
+            return $this->fail('Gagal menyimpan jawaban: ' . json_encode($this->userJawabanModel->errors()), 500);
         }
     }
 

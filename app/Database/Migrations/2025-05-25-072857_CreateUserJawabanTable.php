@@ -20,6 +20,11 @@ class CreateUserJawabanTable extends Migration
                 'constraint'     => 11,
                 'unsigned'       => true,
             ],
+            'id_test' => [
+                'type'           => 'INT',
+                'constraint'     => 5,
+                'unsigned'       => true,
+            ],
             'id_question' => [
                 'type'       => 'INT',
                 'constraint' => 5,
